@@ -9,11 +9,17 @@
 
 double  g_dElapsedTime;
 double  g_dDeltaTime;
+int     score;
+
+WORD charColor = 0x2B;
+WORD berryColor = 0xA1;
+
 SKeyEvent g_skKeyEvent[K_COUNT];
 SMouseEvent g_mouseEvent;
 
 // Game specific variables here
-SGameChar   g_sChar;
+SGameChar   g_sChar; //character variables
+SGameChar   g_sBerry[10]; // Berry
 EGAMESTATES g_eGameState = S_SPLASHSCREEN; // initial state
 
 // Console object
@@ -37,6 +43,7 @@ void init( void )
     g_sChar.m_cLocation.X = g_Console.getConsoleSize().X / 2;
     g_sChar.m_cLocation.Y = g_Console.getConsoleSize().Y / 2;
     g_sChar.m_bActive = true;
+    g_sBerry[10].m_bActive = true;
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(0, 16, L"Consolas");
 
@@ -213,6 +220,8 @@ void update(double dt)
     }
 }
 
+void renderBerry();
+void updateBerry();
 
 void splashScreenWait()    // waits for time to pass in splash screen
 {
@@ -225,28 +234,29 @@ void updateGame()       // gameplay logic
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
+    updateBerry();
 }
 
 void moveCharacter()
 {    
     // Updating the location of the character based on the key release
     // providing a beep sound whenver we shift the character
-    if (g_skKeyEvent[K_UP].keyReleased && g_sChar.m_cLocation.Y > 0)
+    if (g_skKeyEvent[K_UP].keyDown && g_sChar.m_cLocation.Y > 0)
     {
         //Beep(1440, 30);
         g_sChar.m_cLocation.Y--;       
     }
-    if (g_skKeyEvent[K_LEFT].keyReleased && g_sChar.m_cLocation.X > 0)
+    if (g_skKeyEvent[K_LEFT].keyDown && g_sChar.m_cLocation.X > 0)
     {
         //Beep(1440, 30);
         g_sChar.m_cLocation.X--;        
     }
-    if (g_skKeyEvent[K_DOWN].keyReleased && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
+    if (g_skKeyEvent[K_DOWN].keyDown && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
     {
         //Beep(1440, 30);
         g_sChar.m_cLocation.Y++;        
     }
-    if (g_skKeyEvent[K_RIGHT].keyReleased && g_sChar.m_cLocation.X < g_Console.getConsoleSize().X - 1)
+    if (g_skKeyEvent[K_RIGHT].keyDown && g_sChar.m_cLocation.X < g_Console.getConsoleSize().X - 1)
     {
         //Beep(1440, 30);
         g_sChar.m_cLocation.X++;        
@@ -317,34 +327,35 @@ void renderSplashScreen()  // renders the splash screen
 void renderGame()
 {
     renderMap();        // renders the map to the buffer first
+    renderBerry();      // renders the berries(10)
     renderCharacter();  // renders the character into the buffer
+
 }
 
 void renderMap()
 {
-    // Set up sample colours, and output shadings
-    const WORD colors[] = {
-        0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
-        0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
-    };
+    //// Set up sample colours, and output shadings
+    //const WORD colors[] = {
+    //    0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
+    //    0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
+    //};
 
-    COORD c;
-    for (int i = 0; i < 12; ++i)
-    {
-        c.X = 5 * i;
-        c.Y = i + 1;
-        colour(colors[i]);
-        g_Console.writeToBuffer(c, " °±²Û", colors[i]);
-    }
+    //COORD c;
+    //for (int i = 0; i < 12; ++i)
+    //{
+    //    c.X = 5 * i;
+    //    c.Y = i + 1;
+    //    colour(colors[i]);
+    //    g_Console.writeToBuffer(c, " °±²Û", colors[i]);
+    //}
 }
 
 void renderCharacter()
 {
     // Draw the location of the character
-    WORD charColor = 0x0C;
     if (g_sChar.m_bActive)
     {
-        charColor = 0x0A;
+        charColor = 0x1A;
     }
     g_Console.writeToBuffer(g_sChar.m_cLocation, (char)1, charColor);
 }
@@ -360,12 +371,19 @@ void renderFramerate()
     c.Y = 0;
     g_Console.writeToBuffer(c, ss.str());
 
+    // displays the current berry score
+    ss.str("");
+    ss << "score: " << score;
+    c.X = g_Console.getConsoleSize().X - 66;
+    c.Y = 0;
+    g_Console.writeToBuffer(c, ss.str());
+
     // displays the elapsed time
     ss.str("");
     ss << g_dElapsedTime << "secs";
     c.X = 0;
     c.Y = 0;
-    g_Console.writeToBuffer(c, ss.str(), 0x59);
+    g_Console.writeToBuffer(c, ss.str());
 }
 
 // this is an example of how you would use the input events
@@ -443,6 +461,38 @@ void renderInputEvents()
     }
     
 }
+
+void enemy()
+{
+}
+
+void updateBerry()
+{
+    
+    if (g_sChar.m_cLocation.X == g_sBerry[0].m_cLocation.X && g_sChar.m_cLocation.Y == g_sBerry[0].m_cLocation.Y)
+    {
+        if (g_sBerry[0].m_bActive = true)
+        {
+            g_sBerry[0].m_bActive = false;
+            berryColor = 0x1A;
+            score += 1;
+        };
+    }
+}
+
+void renderBerry()
+{
+    g_sBerry[0].m_cLocation.X = 10;
+    g_sBerry[0].m_cLocation.Y = 10;
+    for (int i = 0; i < 10; i++)
+    {
+        if (g_sBerry[i].m_bActive = true)
+        {
+            g_Console.writeToBuffer(g_sBerry[i].m_cLocation, (char)8, berryColor);
+        }
+    }
+}
+
 
 
 
