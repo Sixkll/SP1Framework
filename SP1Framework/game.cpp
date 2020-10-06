@@ -21,8 +21,38 @@ SMouseEvent g_mouseEvent;
 // Game specific variables here
 SGameChar   g_sChar; //character variables
 SGameChar   g_sBerry[10]; // Berry
-SGameChar   g_sWall[100]; // Wall
+SGameChar   g_sWall[2000]; // Wall
+SGameChar   g_sPortal[2]; // portal/ teleporter
 EGAMESTATES g_eGameState = S_SPLASHSCREEN; // initial state
+
+int map[25][80] = { 
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,                    
+};
+
 
 // Console object
 Console g_Console(80, 25, "SP1 Framework");
@@ -36,6 +66,9 @@ Console g_Console(80, 25, "SP1 Framework");
 //--------------------------------------------------------------
 void init( void )
 {
+    /* initialize random seed: */
+    srand(time(NULL));
+
     // Set precision for floating point output
     g_dElapsedTime = 0.0;    
 
@@ -46,9 +79,41 @@ void init( void )
     g_sChar.m_cLocation.Y = g_Console.getConsoleSize().Y / 2;
     g_sChar.m_bActive = true;
     g_sBerry[0].m_bActive = true;
-    g_sWall[0].m_bActive = true;
+    g_sPortal[0, 1].m_bActive = true;
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(0, 16, L"Consolas");
+
+    //initialize wall
+    //for (int i = 0; i < 100; i++)
+    //{
+    //    g_sWall[i].m_bActive = true;
+    //    g_sWall[i].m_cLocation.X = rand() % 80;
+    //    g_sWall[i].m_cLocation.Y = rand() % 25;
+    //}
+
+    //init bery
+    for (int i = 0; i < 10; i++)
+    {
+        g_sBerry[i].m_bActive = true;
+        g_sBerry[i].m_cLocation.X = rand() % 80;
+        g_sBerry[i].m_cLocation.Y = rand() % 25;
+    }
+
+    int wallIdx = 0;
+
+    for (int i = 0; i < 25; i++)
+    {
+        for (int j = 0; j < 80; j++)
+        {
+            if (map[i][j] == 1)
+            {
+                g_sWall[wallIdx].m_bActive = true;
+                g_sWall[wallIdx].m_cLocation.X = j;
+                g_sWall[wallIdx].m_cLocation.Y = i;
+                wallIdx++;
+            }
+        }
+    }
 
     // remember to set your keyboard handler, so that your functions can be notified of input events
     g_Console.setKeyboardHandler(keyboardHandler);
@@ -236,6 +301,7 @@ void updateGame()       // gameplay logic
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
     updateBerry();
+    updatePortal();
     updateWall();
 }
 
@@ -342,6 +408,7 @@ void renderGame()
 {
     renderMap();        // renders the map to the buffer first
     renderBerry();      // renders the berries(10)
+    renderPortal();
     renderWall();
     renderCharacter();  // renders the character into the buffer
 
@@ -438,7 +505,7 @@ void renderInputEvents()
 
     // mouse events    
     ss.str("");
-    ss << "Mouse position (" << g_mouseEvent.mousePosition.X << ", " << g_mouseEvent.mousePosition.Y << ")";
+    ss << "(" << g_mouseEvent.mousePosition.X << ", " << g_mouseEvent.mousePosition.Y << ")";
     g_Console.writeToBuffer(g_mouseEvent.mousePosition, ss.str(), 0x59);
     ss.str("");
     switch (g_mouseEvent.eventFlags)
@@ -477,27 +544,23 @@ void renderInputEvents()
     
 }
 
-void enemy()
-{
-}
-
 void updateBerry()
 {
-    
-    if (g_sChar.m_cLocation.X == g_sBerry[0].m_cLocation.X && g_sChar.m_cLocation.Y == g_sBerry[0].m_cLocation.Y)
+    for (int i = 0; i < 10; i++)
     {
-        if (g_sBerry[0].m_bActive == true)
+        if (g_sChar.m_cLocation.X == g_sBerry[i].m_cLocation.X && g_sChar.m_cLocation.Y == g_sBerry[i].m_cLocation.Y)
         {
-            g_sBerry[0].m_bActive = false;
-            score += 10;
+            if (g_sBerry[i].m_bActive == true)
+            {
+                g_sBerry[i].m_bActive = false;
+                score += 10;
+            }
         }
     }
 }
 
 void renderBerry()
 {
-    g_sBerry[0].m_cLocation.X = 10;
-    g_sBerry[0].m_cLocation.Y = 10;
     for (int i = 0; i < 10; i++)
     {
         if (g_sBerry[i].m_bActive == true)
@@ -514,14 +577,37 @@ void updateWall()
 
 void renderWall()
 {
-    int i = 0;
-    g_sWall[i].m_cLocation.X = 55;
-    g_sWall[i].m_cLocation.Y = 15;
     for (int i = 0; i < 100; i++)
     {
+
         if (g_sWall[i].m_bActive == true)
         {
             g_Console.writeToBuffer(g_sWall[i].m_cLocation, "#", 0x03);
         }
     }
+}
+
+void updatePortal()
+{
+        if (g_sChar.m_cLocation.X == g_sPortal[0].m_cLocation.X && g_sChar.m_cLocation.Y == g_sPortal[0].m_cLocation.Y)
+        {
+            g_sChar.m_cLocation.X = 78;
+            g_sChar.m_cLocation.Y = 12;
+        }
+        if (g_sChar.m_cLocation.X == g_sPortal[1].m_cLocation.X && g_sChar.m_cLocation.Y == g_sPortal[1].m_cLocation.Y)
+        {
+            g_sChar.m_cLocation.X = 1;
+            g_sChar.m_cLocation.Y = 12;
+        }
+}
+
+void renderPortal()
+{
+    g_sPortal[0].m_cLocation.X = 0;
+    g_sPortal[0].m_cLocation.Y = 12;
+    g_sPortal[1].m_cLocation.X = 79;
+    g_sPortal[1].m_cLocation.Y = 12;
+
+    g_Console.writeToBuffer(g_sPortal[0].m_cLocation, "@", 0x04);
+    g_Console.writeToBuffer(g_sPortal[1].m_cLocation, "@", 0x04);
 }
