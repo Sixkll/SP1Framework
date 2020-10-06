@@ -11,6 +11,7 @@ double  g_dElapsedTime;
 double  g_dDeltaTime;
 int     score;
 
+COORD previousPos;
 WORD charColor = 0x2B;
 WORD berryColor = 0xA1;
 
@@ -45,6 +46,7 @@ void init( void )
     g_sChar.m_cLocation.Y = g_Console.getConsoleSize().Y / 2;
     g_sChar.m_bActive = true;
     g_sBerry[0].m_bActive = true;
+    g_sWall[0].m_bActive = true;
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(0, 16, L"Consolas");
 
@@ -234,12 +236,16 @@ void updateGame()       // gameplay logic
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
     updateBerry();
+    updateWall();
 }
 
 void moveCharacter()
 {    
     // Updating the location of the character based on the key release
     // providing a beep sound whenver we shift the character
+    previousPos.X = g_sChar.m_cLocation.X;
+    previousPos.Y = g_sChar.m_cLocation.Y;
+
     if (g_skKeyEvent[K_UP].keyDown && g_sChar.m_cLocation.Y > 0)
     {
         //Beep(1440, 30);
@@ -265,6 +271,15 @@ void moveCharacter()
         g_sChar.m_bActive = !g_sChar.m_bActive;        
     }
 
+    for (int i = 0; i < 100; ++i)
+    {
+        if (g_sWall[i].m_cLocation.X == g_sChar.m_cLocation.X && g_sWall[i].m_cLocation.Y == g_sChar.m_cLocation.Y)
+        {
+            g_sChar.m_cLocation.X = previousPos.X;
+            g_sChar.m_cLocation.Y = previousPos.Y;
+            return;
+        }
+    }
    
 }
 void processUserInput()
@@ -327,6 +342,7 @@ void renderGame()
 {
     renderMap();        // renders the map to the buffer first
     renderBerry();      // renders the berries(10)
+    renderWall();
     renderCharacter();  // renders the character into the buffer
 
 }
@@ -473,7 +489,7 @@ void updateBerry()
         if (g_sBerry[0].m_bActive == true)
         {
             g_sBerry[0].m_bActive = false;
-            score += 1;
+            score += 10;
         }
     }
 }
@@ -491,10 +507,21 @@ void renderBerry()
     }
 }
 
+void updateWall()
+{
+    
+}
+
 void renderWall()
 {
+    int i = 0;
+    g_sWall[i].m_cLocation.X = 55;
+    g_sWall[i].m_cLocation.Y = 15;
     for (int i = 0; i < 100; i++)
     {
-        if
+        if (g_sWall[i].m_bActive == true)
+        {
+            g_Console.writeToBuffer(g_sWall[i].m_cLocation, "#", 0x03);
+        }
     }
 }
