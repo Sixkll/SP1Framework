@@ -20,6 +20,7 @@ SMouseEvent g_mouseEvent;
 // Game specific variables here
 SGameChar   g_sChar; //character variables
 SGameChar   g_sBerry[10]; // Berry
+SGameChar   g_sWall[100]; // Wall
 EGAMESTATES g_eGameState = S_SPLASHSCREEN; // initial state
 
 // Console object
@@ -43,7 +44,7 @@ void init( void )
     g_sChar.m_cLocation.X = g_Console.getConsoleSize().X / 2;
     g_sChar.m_cLocation.Y = g_Console.getConsoleSize().Y / 2;
     g_sChar.m_bActive = true;
-    g_sBerry[10].m_bActive = true;
+    g_sBerry[0].m_bActive = true;
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(0, 16, L"Consolas");
 
@@ -220,8 +221,6 @@ void update(double dt)
     }
 }
 
-void renderBerry();
-void updateBerry();
 
 void splashScreenWait()    // waits for time to pass in splash screen
 {
@@ -471,12 +470,11 @@ void updateBerry()
     
     if (g_sChar.m_cLocation.X == g_sBerry[0].m_cLocation.X && g_sChar.m_cLocation.Y == g_sBerry[0].m_cLocation.Y)
     {
-        if (g_sBerry[0].m_bActive = true)
+        if (g_sBerry[0].m_bActive == true)
         {
             g_sBerry[0].m_bActive = false;
-            berryColor = 0x1A;
             score += 1;
-        };
+        }
     }
 }
 
@@ -486,13 +484,17 @@ void renderBerry()
     g_sBerry[0].m_cLocation.Y = 10;
     for (int i = 0; i < 10; i++)
     {
-        if (g_sBerry[i].m_bActive = true)
+        if (g_sBerry[i].m_bActive == true)
         {
             g_Console.writeToBuffer(g_sBerry[i].m_cLocation, (char)8, berryColor);
         }
     }
 }
 
-
-
-
+void renderWall()
+{
+    for (int i = 0; i < 100; i++)
+    {
+        if
+    }
+}
