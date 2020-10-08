@@ -40,10 +40,10 @@ enum EGAMESTATES
 {
     S_SPLASHSCREEN,
     S_GAME,
-    S_COUNT,
     S_RESET,
     S_WIN,
-    S_LOSE
+    S_LOSE,
+    S_COUNT
 };
 
 // struct for the game character
@@ -79,9 +79,11 @@ void updatePortal();
 void renderPortal();
 void updateEnemy();
 void renderEnemy();
-void moveEnemy();
+void renderPowerUp();
+void updatePwrUp();
 void renderGameOver();
 void renderWin();
+void reset();
 
 // keyboard and mouse input event managers
 void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent);  // define this function for the console to call when there are keyboard events
