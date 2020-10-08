@@ -42,6 +42,7 @@ enum EGAMESTATES
     S_GAME,
     S_COUNT,
     S_RESET,
+    S_WIN,
     S_LOSE
 };
 
@@ -80,6 +81,7 @@ void updateEnemy();
 void renderEnemy();
 void moveEnemy();
 void renderGameOver();
+void renderWin();
 
 // keyboard and mouse input event managers
 void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent);  // define this function for the console to call when there are keyboard events

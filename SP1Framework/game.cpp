@@ -299,11 +299,11 @@ void update(double dt)
             break;
         case S_GAME: updateGame(); // gameplay logic when we are in the game
             break;
-        case S_LOSE: renderGameOver();
-            if (g_skKeyEvent[K_SPACE].keyDown)
-            { // reset game
-                g_eGameState = S_GAME;
-            }
+        //case S_LOSE: renderGameOver();
+        //    if (g_skKeyEvent[K_SPACE].keyDown)
+        //    { // reset game
+        //        g_eGameState = S_GAME;
+        //    }
             break;
     }
 }
@@ -392,6 +392,12 @@ void render()
     case S_SPLASHSCREEN: renderSplashScreen();
         break;
     case S_GAME: renderGame();
+        break;
+    case S_LOSE: renderGameOver();
+        if (g_skKeyEvent[K_SPACE].keyDown)
+        { // reset game
+            g_eGameState = S_GAME;
+        }
         break;
     }
     renderFramerate();      // renders debug information, frame rate, elapsed time, etc
@@ -676,10 +682,10 @@ void moveEnemy()
 {
     // 0 - left, 1 - up, 2 - right, 3 - down
     enemyBounceTime += g_dDeltaTime; // every 2 seconds..
-    if (enemyBounceTime >= 2)
+    if (enemyBounceTime >= 1)
     {
         enemyBounceTime = 0;
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 3; i++)
         {
             enemyPrevPos.X = g_sEnemy[i].m_cLocation.X;
             enemyPrevPos.Y = g_sEnemy[i].m_cLocation.Y;
@@ -710,7 +716,35 @@ void moveEnemy()
                 }
             }
         }//end of for loop
-        
+
+        // follows the player
+        if (g_sEnemy[3].m_cLocation.X <= g_sChar.m_cLocation.X) // move right
+        {
+            g_sEnemy[3].m_cLocation.X += 1;
+        }
+        if (g_sEnemy[3].m_cLocation.X >= g_sChar.m_cLocation.X) // move left
+        {
+            g_sEnemy[3].m_cLocation.X -= 1;
+        }
+        if (g_sEnemy[3].m_cLocation.Y >= g_sChar.m_cLocation.Y) // move up
+        {
+            g_sEnemy[3].m_cLocation.Y -= 1;
+        }
+        if (g_sEnemy[3].m_cLocation.Y <= g_sChar.m_cLocation.Y) // move down
+        {
+            g_sEnemy[3].m_cLocation.Y += 1;
+        }
+        enemyPrevPos.X = g_sEnemy[3].m_cLocation.X;
+        enemyPrevPos.Y = g_sEnemy[3].m_cLocation.Y;
+        for (int j = 0; j < 2000; ++j)
+        {
+            if (g_sWall[j].m_cLocation.X == g_sEnemy[3].m_cLocation.X && g_sWall[j].m_cLocation.Y == g_sEnemy[3].m_cLocation.Y)
+            {
+                g_sEnemy[3].m_cLocation.X = enemyPrevPos.X;
+                g_sEnemy[3].m_cLocation.Y = enemyPrevPos.Y;
+                return;
+            }
+        }
     }
 }
 
@@ -726,6 +760,25 @@ void renderGameOver() // Game Over screen
         c.Y += 1;
         c.X = g_Console.getConsoleSize().X / 2 - 7;
         ss << "You got a score of " << score;
+        g_Console.writeToBuffer(c, ss.str(), 0x04);
+        c.Y += 1;
+        c.X = g_Console.getConsoleSize().X / 2 - 9;
+        g_Console.writeToBuffer(c, "Press Space to restart", 0x04);
+    }
+}
+
+void renderWin()
+{
+    COORD c = g_Console.getConsoleSize();
+    if (score <= 110)
+    {
+        std::ostringstream ss;
+        c.Y /= 3;
+        c.X = c.X / 2 - 5;
+        g_Console.writeToBuffer(c, "You Win", 0x04);
+        c.Y += 1;
+        c.X = g_Console.getConsoleSize().X / 2 - 7;
+        ss << "You got a score of " << score * playerLives - g_dElapsedTime; // player gets a higher score depending on their lives left + time they took
         g_Console.writeToBuffer(c, ss.str(), 0x04);
         c.Y += 1;
         c.X = g_Console.getConsoleSize().X / 2 - 9;
