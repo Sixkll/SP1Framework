@@ -73,7 +73,6 @@ void renderToScreen();      // dump the contents of the buffer to the screen, on
 void renderInputEvents();   // renders the status of input events
 void updateBerry();
 void renderBerry();
-void updateWall();
 void renderWall();
 void updatePortal();
 void renderPortal();
